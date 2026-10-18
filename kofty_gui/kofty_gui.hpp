@@ -10,6 +10,8 @@
 namespace kofty_gui_detail {
     inline tgui::Gui* g_gui = nullptr;
     
+    inline std::vector<tgui::ComboBox::Ptr> g_comboboxes;
+    inline std::vector<tgui::ProgressBar::Ptr> g_progressbars;
     inline std::vector<tgui::Button::Ptr> g_buttons;
     inline std::vector<tgui::Label::Ptr> g_labels;
     inline std::vector<tgui::EditBox::Ptr> g_textboxes;
@@ -24,6 +26,8 @@ inline void gui_window(int w, int h, const std::string& title) {
     SetTargetFPS(60);
     kofty_gui_detail::g_gui = new tgui::Gui();
     
+    kofty_gui_detail::g_comboboxes.clear();
+    kofty_gui_detail::g_progressbars.clear();
     kofty_gui_detail::g_buttons.clear();
     kofty_gui_detail::g_labels.clear();
     kofty_gui_detail::g_textboxes.clear();
@@ -136,6 +140,48 @@ inline void gui_close() {
     delete kofty_gui_detail::g_gui;
     kofty_gui_detail::g_gui = nullptr;
     CloseWindow();
+}
+
+// --- COMBOBOX (Dropdown) ---
+inline int gui_add_dropdown(int x, int y, int w) {
+    auto box = tgui::ComboBox::create();
+    box->setPosition(x, y);
+    box->setSize(w, 30);
+    int index = kofty_gui_detail::g_comboboxes.size();
+    kofty_gui_detail::g_comboboxes.push_back(box);
+    kofty_gui_detail::g_gui->add(box);
+    return index;
+}
+
+inline void gui_add_dropdown_item(int index, const std::string& item) {
+    if (index >= 0 && index < kofty_gui_detail::g_comboboxes.size()) {
+        kofty_gui_detail::g_comboboxes[index]->addItem(item);
+    }
+}
+
+inline int gui_get_dropdown_index(int index) {
+    if (index >= 0 && index < kofty_gui_detail::g_comboboxes.size()) {
+        return kofty_gui_detail::g_comboboxes[index]->getSelectedItemIndex();
+    }
+    return -1;
+}
+
+// --- PROGRESS BAR ---
+inline int gui_add_progressbar(int x, int y, int w, int h, int max_val) {
+    auto bar = tgui::ProgressBar::create();
+    bar->setPosition(x, y);
+    bar->setSize(w, h);
+    bar->setMaximum(max_val);
+    int index = kofty_gui_detail::g_progressbars.size();
+    kofty_gui_detail::g_progressbars.push_back(bar);
+    kofty_gui_detail::g_gui->add(bar);
+    return index;
+}
+
+inline void gui_set_progressbar_value(int index, int value) {
+    if (index >= 0 && index < kofty_gui_detail::g_progressbars.size()) {
+        kofty_gui_detail::g_progressbars[index]->setValue(value);
+    }
 }
 
 #endif
