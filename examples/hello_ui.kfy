@@ -1,0 +1,17 @@
+from kofty_gui import gui_window, gui_add_button, gui_add_label, gui_running, gui_update, gui_check_click, gui_close
+
+gui_window(800, 600, "Interactive Kofty UI")
+gui_add_label("Click the buttons below!", 300, 100)
+gui_add_button("Button 0", 300, 200, 200, 60)
+gui_add_button("Button 1", 300, 300, 200, 60)
+
+while gui_running():
+    clicked = gui_check_click()
+    if clicked == 0:
+        print("You clicked Button 0!")
+    if clicked == 1:
+        print("You clicked Button 1!")
+        
+    gui_update()
+
+gui_close()
