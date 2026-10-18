@@ -1,36 +1,42 @@
-"""
-kofty-gui — GUI toolkit for Kofty.
+#ifndef KOFTY_GUI_HPP
+#define KOFTY_GUI_HPP
 
-Provides `kofty_gui.hpp` (TGUI + raylib retained-mode wrapper)
-and install paths so `kofty` can find them via `import kofty_gui`.
+#include <TGUI/TGUI.hpp>
+#include <TGUI/Backend/raylib.hpp>
+#include <string>
 
-Usage:
-    import kofty_gui
-    print(kofty_gui.header_path())      # absolute path to kofty_gui.hpp
-    print(kofty_gui.include_dirs())     # for g++ -I
-    print(kofty_gui.libs())             # for g++ -l
-"""
-from pathlib import Path
+namespace kofty_gui_detail {
+    inline tgui::Gui* g_gui = nullptr;
+}
 
-def package_dir():
-    return Path(__file__).resolve().parent
+inline void gui_window(int w, int h, const std::string& title) {
+    SetTraceLogLevel(LOG_ERROR);
+    InitWindow(w, h, title.c_str());
+    SetTargetFPS(60);
+    kofty_gui_detail::g_gui = new tgui::Gui();
+}
 
-def header_path():
-    return package_dir() / "kofty_gui.hpp"
+inline void gui_add_button(const std::string& label, int x, int y, int bw, int bh) {
+    auto button = tgui::Button::create(label);
+    button->setPosition(x, y);
+    button->setSize(bw, bh);
+    kofty_gui_detail::g_gui->add(button);
+}
 
-def include_dirs():
-    """Return a list of -I include directories."""
-    return [
-        str(package_dir()),
-        # Plus TGUI/raylib include paths once resolved
-    ]
+inline void gui_run() {
+    auto* gui = kofty_gui_detail::g_gui;
+    while (!WindowShouldClose()) {
+        gui->handleEvents();
+        while (int ch = GetCharPressed()) gui->handleCharPressed(ch);
+        while (int key = GetKeyPressed())  gui->handleKeyPressed(key);
+        BeginDrawing();
+        ClearBackground({240, 240, 240, 255});
+        gui->draw();
+        EndDrawing();
+    }
+    CloseWindow();
+    delete gui;
+    kofty_gui_detail::g_gui = nullptr;
+}
 
-def libs():
-    """Return a list of -l libraries."""
-    return ["TGUI", "raylib", "opengl32", "gdi32", "winmm"]
-
-def lib_dirs():
-    """Return a list of -L library directories."""
-    return [
-        # Resolved TGUI/raylib paths
-    ]
+#endif
