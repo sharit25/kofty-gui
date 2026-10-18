@@ -1,0 +1,23 @@
+import kofty_gui as gui
+
+panel = gui.Panel("Kofty GUI Demo", 600, 400)
+vbox = gui.VBox(panel)
+
+title = gui.Label(vbox, "Welcome to Kofty GUI")
+title.set_font_size(24)
+
+name_input = gui.TextInput(vbox, "Enter your name...")
+
+greeting = gui.Label(vbox, "")
+
+def on_greet():
+    name = name_input.get_text()
+    if name != "":
+        greeting.set_text("Hello, " + name + "!")
+    else:
+        greeting.set_text("Hello, stranger!")
+
+greet_btn = gui.Button(vbox, "Greet")
+greet_btn.on_click(on_greet)
+
+gui.run()

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kofty-gui"
+version = "0.1.0"
+description = "GUI toolkit for Kofty — TGUI + raylib retained-mode wrapper"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "sharit25", email = "elradbrax@gmail.com" }]
+dependencies = ["kofty>=0.5.0"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: C++",
+    "Topic :: Software Development :: User Interfaces",
+]
+
+[project.urls]
+Homepage = "https://github.com/sharit25/kofty-gui"
+Repository = "https://github.com/sharit25/kofty-gui"
+
+[tool.setuptools]
+packages = ["kofty_gui"]
+
+[tool.setuptools.package-data]
+kofty_gui = ["*.hpp", "*.kfy"]
