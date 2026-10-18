@@ -10,7 +10,10 @@ def include_dirs():
     return [str(package_dir())]
 
 def libs():
-    return ["TGUI", "raylib", "opengl32", "gdi32", "winmm"]
+    # Stub build: no external libraries needed.
+    # When TGUI + raylib are installed, change to:
+    #   return ["TGUI", "raylib", "opengl32", "gdi32", "winmm"]
+    return []
 
 def lib_dirs():
     return []
