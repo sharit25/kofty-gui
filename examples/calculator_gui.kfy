@@ -1,0 +1,35 @@
+import kofty_gui as gui
+
+panel = gui.Panel("Calculator", 400, 300)
+vbox = gui.VBox(panel)
+
+title = gui.Label(vbox, "Simple Calculator")
+title.set_font_size(22)
+
+input_a = gui.TextInput(vbox, "First number")
+input_b = gui.TextInput(vbox, "Second number")
+result = gui.Label(vbox, "")
+result.set_font_size(20)
+
+def on_add():
+    a_text = input_a.get_text()
+    b_text = input_b.get_text()
+    if a_text == "" or b_text == "":
+        result.set_text("Enter both numbers")
+        return
+    a = float(a_text)
+    b = float(b_text)
+    result.set_text("= " + str(a + b))
+
+def on_clear():
+    input_a.set_text("")
+    input_b.set_text("")
+    result.set_text("")
+
+add_btn = gui.Button(vbox, "Add")
+add_btn.on_click(on_add)
+
+clear_btn = gui.Button(vbox, "Clear")
+clear_btn.on_click(on_clear)
+
+gui.run()
