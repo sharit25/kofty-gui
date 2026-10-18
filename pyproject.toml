@@ -22,6 +22,9 @@ classifiers = [
 Homepage = "https://github.com/sharit25/kofty-gui"
 Repository = "https://github.com/sharit25/kofty-gui"
 
+[project.entry-points."kofty.modules"]
+kofty_gui = "kofty_gui:register"
+
 [tool.setuptools]
 packages = ["kofty_gui"]
 
