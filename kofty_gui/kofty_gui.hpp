@@ -66,6 +66,12 @@ inline int gui_add_button(const std::string& label, int x, int y, int bw, int bh
     return index;
 }
 
+inline void gui_set_button_text(int index, const std::string& text) {
+    if (index >= 0 && index < kofty_gui_detail::g_buttons.size()) {
+        kofty_gui_detail::g_buttons[index]->setText(text);
+    }
+}
+
 inline int gui_add_textbox(const std::string& placeholder, int x, int y, int w, int h) {
     auto box = tgui::EditBox::create();
     box->setPosition(x, y);
