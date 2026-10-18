@@ -1,17 +1,48 @@
-from kofty_gui import gui_window, gui_add_button, gui_add_label, gui_running, gui_update, gui_check_click, gui_close
+from kofty_gui import gui_window, gui_add_label, gui_set_label, gui_add_checkbox
+from kofty_gui import gui_add_button, gui_add_textbox, gui_get_textbox_text, gui_add_slider, gui_get_slider_value
+from kofty_gui import gui_running, gui_update, gui_check_click, gui_close
 
-gui_window(800, 600, "Interactive Kofty UI")
-gui_add_label("Click the buttons below!", 300, 100)
-gui_add_button("Button 0", 300, 200, 200, 60)
-gui_add_button("Button 1", 300, 300, 200, 60)
+gui_window(800, 600, "Kofty UI Showcase")
+
+# 1. Static Label
+gui_add_label("Welcome to the Kofty UI Toolkit!", 250, 30)
+
+# 2. Dynamic Label (Score)
+score_label_id = gui_add_label("Score: 0", 300, 100)
+
+# 3. Text Box (User Input)
+gui_add_label("Enter your name:", 200, 150)
+box_id = gui_add_textbox("Type here...", 200, 180, 400, 30)
+
+# 4. Slider (Volume)
+gui_add_label("Volume:", 200, 230)
+slider_id = gui_add_slider(200, 260, 400, 20, 0, 100)
+
+# 5. Checkbox
+gui_add_checkbox("Enable Fullscreen", 200, 300)
+
+# 6. Buttons
+btn_greet = gui_add_button("Say Hello", 200, 350, 180, 40)
+btn_inc = gui_add_button("Increase Score", 420, 350, 180, 40)
+
+score = 0
 
 while gui_running():
     clicked = gui_check_click()
+    
+    # If Button 0 (Say Hello) was clicked
     if clicked == 0:
-        print("You clicked Button 0!")
-    if clicked == 1:
-        print("You clicked Button 1!")
+        name = gui_get_textbox_text(box_id)
+        gui_set_label(score_label_id, f"Hello, {name}!")
         
+    # If Button 1 (Increase Score) was clicked
+    if clicked == 1:
+        score = score + 1
+        gui_set_label(score_label_id, f"Score: {score}")
+
+    # Every frame, we can check the slider value and update a label if we wanted to
+    # vol = gui_get_slider_value(slider_id)
+    
     gui_update()
 
 gui_close()
