@@ -21,12 +21,11 @@ namespace kofty_gui_detail {
     inline int g_last_clicked_index = -1; 
 }
 
-// Helper to get the parent container using proper C++ polymorphism, not reinterpret_cast!
 inline tgui::Container::Ptr get_container(int parent_id) {
     if (parent_id >= 0 && parent_id < (int)kofty_gui_detail::g_layouts.size()) {
         return kofty_gui_detail::g_layouts[parent_id];
     }
-    return kofty_gui_detail::g_gui->getContainer(); // Returns the root container
+    return kofty_gui_detail::g_gui->getContainer();
 }
 
 inline void gui_window(int w, int h, const std::string& title) {
@@ -46,17 +45,29 @@ inline void gui_window(int w, int h, const std::string& title) {
 }
 
 // --- LAYOUTS ---
-inline int gui_add_boxlayout(int orientation, int x, int y, int w, int h, int parent_id) {
-    auto group = tgui::Group::create();
-    group->setPosition(x, y);
-    group->setSize(w, h);
+// orientation: 0 = Vertical, 1 = Horizontal
+inline int gui_add_boxlayout(int orientation, int spacing, int x, int y, int w, int h, int parent_id) {
+    tgui::Group::Ptr layout;
+    if (orientation == 0) {
+        auto v = tgui::VerticalLayout::create();
+        v->getRenderer()->setSpaceBetweenWidgets(spacing);
+        layout = v;
+    } else {
+        auto h = tgui::HorizontalLayout::create();
+        h->getRenderer()->setSpaceBetweenWidgets(spacing);
+        layout = h;
+    }
+    layout->setPosition(x, y);
+    layout->setSize(w, h);
+    
     int index = kofty_gui_detail::g_layouts.size();
-    kofty_gui_detail::g_layouts.push_back(group);
-    get_container(parent_id)->add(group);
+    kofty_gui_detail::g_layouts.push_back(layout);
+    get_container(parent_id)->add(layout);
     return index;
 }
 
 inline int gui_add_gridlayout(int cols, int x, int y, int w, int h, int parent_id) {
+    // GridLayout still uses Group for now (TGUI has a Grid but it's different)
     auto group = tgui::Group::create();
     group->setPosition(x, y);
     group->setSize(w, h);
@@ -67,9 +78,9 @@ inline int gui_add_gridlayout(int cols, int x, int y, int w, int h, int parent_i
 }
 
 // --- WIDGETS ---
+// Note: x and y are IGNORED if parent_id is a layout, because the layout handles positioning.
 inline int gui_add_label(const std::string& text, int x, int y, int parent_id) {
     auto label = tgui::Label::create(text);
-    label->setPosition(x, y);
     label->setTextSize(20);
     int index = kofty_gui_detail::g_labels.size();
     kofty_gui_detail::g_labels.push_back(label);
@@ -85,7 +96,6 @@ inline void gui_set_label(int index, const std::string& text) {
 
 inline int gui_add_button(const std::string& label, int x, int y, int bw, int bh, int parent_id) {
     auto button = tgui::Button::create(label);
-    button->setPosition(x, y);
     button->setSize(bw, bh);
     int index = kofty_gui_detail::g_buttons.size();
     kofty_gui_detail::g_buttons.push_back(button);
@@ -104,7 +114,6 @@ inline void gui_set_button_text(int index, const std::string& text) {
 
 inline int gui_add_textbox(const std::string& placeholder, int x, int y, int w, int h, int parent_id) {
     auto box = tgui::EditBox::create();
-    box->setPosition(x, y);
     box->setSize(w, h);
     box->setDefaultText(placeholder);
     int index = kofty_gui_detail::g_textboxes.size();
@@ -124,7 +133,6 @@ inline const char* gui_get_textbox_text(int index) {
 
 inline int gui_add_slider(int x, int y, int w, int h, int min_val, int max_val, int parent_id) {
     auto slider = tgui::Slider::create();
-    slider->setPosition(x, y);
     slider->setSize(w, h);
     slider->setMinimum(min_val);
     slider->setMaximum(max_val);
@@ -143,7 +151,6 @@ inline int gui_get_slider_value(int index) {
 
 inline int gui_add_progressbar(int x, int y, int w, int h, int max_val, int parent_id) {
     auto bar = tgui::ProgressBar::create();
-    bar->setPosition(x, y);
     bar->setSize(w, h);
     bar->setMaximum(max_val);
     int index = kofty_gui_detail::g_progressbars.size();
@@ -160,7 +167,6 @@ inline void gui_set_progressbar_value(int index, int value) {
 
 inline int gui_add_dropdown(int x, int y, int w, int parent_id) {
     auto box = tgui::ComboBox::create();
-    box->setPosition(x, y);
     box->setSize(w, 30);
     int index = kofty_gui_detail::g_dropdowns.size();
     kofty_gui_detail::g_dropdowns.push_back(box);
