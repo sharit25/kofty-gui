@@ -3,24 +3,24 @@ from kofty_gui import gui_running, gui_update, gui_check_click, gui_close
 
 gui_window(500, 650, "Kofty Tic-Tac-Toe")
 
-status_label = gui_add_label("Player X's turn", 180, 50)
+status_label = gui_add_label("Player X's turn", 180, 50, -1)
 
 # Create the 3x3 grid (IDs 0 to 8)
 btn_ids = []
-btn_ids.append(gui_add_button("-", 50, 100, 100, 100))
-btn_ids.append(gui_add_button("-", 175, 100, 100, 100))
-btn_ids.append(gui_add_button("-", 300, 100, 100, 100))
+btn_ids.append(gui_add_button("-", 50, 100, 100, 100, -1))
+btn_ids.append(gui_add_button("-", 175, 100, 100, 100, -1))
+btn_ids.append(gui_add_button("-", 300, 100, 100, 100, -1))
 
-btn_ids.append(gui_add_button("-", 50, 225, 100, 100))
-btn_ids.append(gui_add_button("-", 175, 225, 100, 100))
-btn_ids.append(gui_add_button("-", 300, 225, 100, 100))
+btn_ids.append(gui_add_button("-", 50, 225, 100, 100, -1))
+btn_ids.append(gui_add_button("-", 175, 225, 100, 100, -1))
+btn_ids.append(gui_add_button("-", 300, 225, 100, 100, -1))
 
-btn_ids.append(gui_add_button("-", 50, 350, 100, 100))
-btn_ids.append(gui_add_button("-", 175, 350, 100, 100))
-btn_ids.append(gui_add_button("-", 300, 350, 100, 100))
+btn_ids.append(gui_add_button("-", 50, 350, 100, 100, -1))
+btn_ids.append(gui_add_button("-", 175, 350, 100, 100, -1))
+btn_ids.append(gui_add_button("-", 300, 350, 100, 100, -1))
 
 # The Restart button (ID 9)
-restart_btn_id = gui_add_button("Restart Game", 175, 500, 150, 50)
+restart_btn_id = gui_add_button("Restart Game", 175, 500, 150, 50, -1)
 
 board = ["-", "-", "-", "-", "-", "-", "-", "-", "-"]
 is_x_turn = True
