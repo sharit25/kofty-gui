@@ -1,44 +1,8 @@
-from kofty_gui import gui_window, gui_running, gui_update, gui_check_click, gui_close
-from kofty_gui import gui_add_boxlayout, gui_add_gridlayout
-from kofty_gui import gui_add_label, gui_set_label, gui_add_button, gui_set_button_text
-from kofty_gui import gui_add_textbox, gui_get_textbox_text, gui_add_slider, gui_get_slider_value
-from kofty_gui import gui_add_progressbar, gui_set_progressbar_value, gui_add_dropdown, gui_add_dropdown_item
+from kofty_gui import gui_window, gui_add_button, gui_running, gui_update, gui_close
 
-gui_window(600, 600, "Kofty Full UI Test")
-
-# 1. Main Layout
-main_box = gui_add_boxlayout(0, 50, 50, 500, 500, -1)
-
-# 2. Add Label & Textbox
-gui_add_label("Enter Name:", 20, 20, main_box)
-name_box = gui_add_textbox("Type here...", 20, 50, 300, 30, main_box)
-
-# 3. Add Slider & Progress Bar
-gui_add_label("Volume:", 20, 100, main_box)
-slider = gui_add_slider(20, 130, 300, 20, 0, 100, main_box)
-progress = gui_add_progressbar(20, 160, 300, 20, 100, main_box)
-
-# 4. Add Dropdown
-gui_add_label("Choose option:", 20, 200, main_box)
-dropdown = gui_add_dropdown(20, 230, 300, main_box)
-gui_add_dropdown_item(dropdown, "Option A")
-gui_add_dropdown_item(dropdown, "Option B")
-gui_add_dropdown_item(dropdown, "Option C")
-
-# 5. Add Button
-btn = gui_add_button("Submit", 20, 280, 150, 40, main_box)
-status_label = gui_add_label("Ready.", 20, 340, main_box)
-
-while gui_running():
-    # Update progress bar based on slider
-    val = gui_get_slider_value(slider)
-    gui_set_progressbar_value(progress, val)
-    
-    clicked = gui_check_click()
-    if clicked == btn:
-        name = gui_get_textbox_text(name_box)
-        gui_set_label(status_label, f"Hello {name}! Value: {val}")
-        
-    gui_update()
-
-gui_close()
+def build_ui():
+    gui_window(500, 400, "Hello from module")
+    gui_add_button("Click me!", 150, 150, 200, 60, -1)
+    while gui_running():
+        gui_update()
+    gui_close()

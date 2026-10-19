@@ -1,0 +1,5 @@
+from hello_ui import build_ui
+
+print("starting app")
+build_ui()
+print("done")
