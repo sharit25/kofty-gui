@@ -14,34 +14,38 @@ namespace kofty_gui_detail {
     inline std::vector<tgui::Label::Ptr> g_labels;
     inline std::vector<tgui::EditBox::Ptr> g_textboxes;
     inline std::vector<tgui::Slider::Ptr> g_sliders;
+    inline std::vector<tgui::ProgressBar::Ptr> g_progressbars;
+    inline std::vector<tgui::ComboBox::Ptr> g_dropdowns;
     inline std::vector<tgui::Group::Ptr> g_layouts;
     
     inline int g_last_clicked_index = -1; 
 }
 
-inline tgui::Container* get_container(int parent_id) {
+// Helper to get the parent container using proper C++ polymorphism, not reinterpret_cast!
+inline tgui::Container::Ptr get_container(int parent_id) {
     if (parent_id >= 0 && parent_id < (int)kofty_gui_detail::g_layouts.size()) {
-        return kofty_gui_detail::g_layouts[parent_id].get();
+        return kofty_gui_detail::g_layouts[parent_id];
     }
-    return reinterpret_cast<tgui::Container*>(kofty_gui_detail::g_gui);
+    return kofty_gui_detail::g_gui->getContainer(); // Returns the root container
 }
 
 inline void gui_window(int w, int h, const std::string& title) {
-    printf("1. Before InitWindow\n"); fflush(stdout);
     SetTraceLogLevel(LOG_ERROR);
     InitWindow(w, h, title.c_str());
-    printf("2. After InitWindow, IsWindowReady=%d\n", IsWindowReady()); fflush(stdout);
     SetTargetFPS(60);
     kofty_gui_detail::g_gui = new tgui::Gui();
-    printf("3. After Gui creation\n"); fflush(stdout);
     
     kofty_gui_detail::g_buttons.clear();
     kofty_gui_detail::g_labels.clear();
     kofty_gui_detail::g_textboxes.clear();
     kofty_gui_detail::g_sliders.clear();
+    kofty_gui_detail::g_progressbars.clear();
+    kofty_gui_detail::g_dropdowns.clear();
     kofty_gui_detail::g_layouts.clear();
     kofty_gui_detail::g_last_clicked_index = -1;
 }
+
+// --- LAYOUTS ---
 inline int gui_add_boxlayout(int orientation, int x, int y, int w, int h, int parent_id) {
     auto group = tgui::Group::create();
     group->setPosition(x, y);
@@ -62,13 +66,14 @@ inline int gui_add_gridlayout(int cols, int x, int y, int w, int h, int parent_i
     return index;
 }
 
+// --- WIDGETS ---
 inline int gui_add_label(const std::string& text, int x, int y, int parent_id) {
     auto label = tgui::Label::create(text);
     label->setPosition(x, y);
     label->setTextSize(20);
     int index = kofty_gui_detail::g_labels.size();
     kofty_gui_detail::g_labels.push_back(label);
-    kofty_gui_detail::g_gui->add(label);
+    get_container(parent_id)->add(label);
     return index;
 }
 
@@ -84,7 +89,7 @@ inline int gui_add_button(const std::string& label, int x, int y, int bw, int bh
     button->setSize(bw, bh);
     int index = kofty_gui_detail::g_buttons.size();
     kofty_gui_detail::g_buttons.push_back(button);
-    kofty_gui_detail::g_gui->add(button);
+    get_container(parent_id)->add(button);
     button->onPress([index]() {
         kofty_gui_detail::g_last_clicked_index = index;
     });
@@ -136,6 +141,47 @@ inline int gui_get_slider_value(int index) {
     return 0;
 }
 
+inline int gui_add_progressbar(int x, int y, int w, int h, int max_val, int parent_id) {
+    auto bar = tgui::ProgressBar::create();
+    bar->setPosition(x, y);
+    bar->setSize(w, h);
+    bar->setMaximum(max_val);
+    int index = kofty_gui_detail::g_progressbars.size();
+    kofty_gui_detail::g_progressbars.push_back(bar);
+    get_container(parent_id)->add(bar);
+    return index;
+}
+
+inline void gui_set_progressbar_value(int index, int value) {
+    if (index >= 0 && index < (int)kofty_gui_detail::g_progressbars.size()) {
+        kofty_gui_detail::g_progressbars[index]->setValue(value);
+    }
+}
+
+inline int gui_add_dropdown(int x, int y, int w, int parent_id) {
+    auto box = tgui::ComboBox::create();
+    box->setPosition(x, y);
+    box->setSize(w, 30);
+    int index = kofty_gui_detail::g_dropdowns.size();
+    kofty_gui_detail::g_dropdowns.push_back(box);
+    get_container(parent_id)->add(box);
+    return index;
+}
+
+inline void gui_add_dropdown_item(int index, const std::string& item) {
+    if (index >= 0 && index < (int)kofty_gui_detail::g_dropdowns.size()) {
+        kofty_gui_detail::g_dropdowns[index]->addItem(item);
+    }
+}
+
+inline int gui_get_dropdown_index(int index) {
+    if (index >= 0 && index < (int)kofty_gui_detail::g_dropdowns.size()) {
+        return kofty_gui_detail::g_dropdowns[index]->getSelectedItemIndex();
+    }
+    return -1;
+}
+
+// --- MAIN LOOP ---
 inline bool gui_running() {
     return !WindowShouldClose();
 }

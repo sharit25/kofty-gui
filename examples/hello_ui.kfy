@@ -1,85 +1,44 @@
-from kofty_gui import gui_window, gui_add_button, gui_set_button_text, gui_add_label, gui_set_label
-from kofty_gui import gui_running, gui_update, gui_check_click, gui_close
+from kofty_gui import gui_window, gui_running, gui_update, gui_check_click, gui_close
+from kofty_gui import gui_add_boxlayout, gui_add_gridlayout
+from kofty_gui import gui_add_label, gui_set_label, gui_add_button, gui_set_button_text
+from kofty_gui import gui_add_textbox, gui_get_textbox_text, gui_add_slider, gui_get_slider_value
+from kofty_gui import gui_add_progressbar, gui_set_progressbar_value, gui_add_dropdown, gui_add_dropdown_item
 
-gui_window(500, 650, "Kofty Tic-Tac-Toe")
+gui_window(600, 600, "Kofty Full UI Test")
 
-status_label = gui_add_label("Player X's turn", 180, 50, -1)
+# 1. Main Layout
+main_box = gui_add_boxlayout(0, 50, 50, 500, 500, -1)
 
-# Create the 3x3 grid (IDs 0 to 8)
-btn_ids = []
-btn_ids.append(gui_add_button("-", 50, 100, 100, 100, -1))
-btn_ids.append(gui_add_button("-", 175, 100, 100, 100, -1))
-btn_ids.append(gui_add_button("-", 300, 100, 100, 100, -1))
+# 2. Add Label & Textbox
+gui_add_label("Enter Name:", 20, 20, main_box)
+name_box = gui_add_textbox("Type here...", 20, 50, 300, 30, main_box)
 
-btn_ids.append(gui_add_button("-", 50, 225, 100, 100, -1))
-btn_ids.append(gui_add_button("-", 175, 225, 100, 100, -1))
-btn_ids.append(gui_add_button("-", 300, 225, 100, 100, -1))
+# 3. Add Slider & Progress Bar
+gui_add_label("Volume:", 20, 100, main_box)
+slider = gui_add_slider(20, 130, 300, 20, 0, 100, main_box)
+progress = gui_add_progressbar(20, 160, 300, 20, 100, main_box)
 
-btn_ids.append(gui_add_button("-", 50, 350, 100, 100, -1))
-btn_ids.append(gui_add_button("-", 175, 350, 100, 100, -1))
-btn_ids.append(gui_add_button("-", 300, 350, 100, 100, -1))
+# 4. Add Dropdown
+gui_add_label("Choose option:", 20, 200, main_box)
+dropdown = gui_add_dropdown(20, 230, 300, main_box)
+gui_add_dropdown_item(dropdown, "Option A")
+gui_add_dropdown_item(dropdown, "Option B")
+gui_add_dropdown_item(dropdown, "Option C")
 
-# The Restart button (ID 9)
-restart_btn_id = gui_add_button("Restart Game", 175, 500, 150, 50, -1)
-
-board = ["-", "-", "-", "-", "-", "-", "-", "-", "-"]
-is_x_turn = True
-game_over = False
+# 5. Add Button
+btn = gui_add_button("Submit", 20, 280, 150, 40, main_box)
+status_label = gui_add_label("Ready.", 20, 340, main_box)
 
 while gui_running():
-    clicked = gui_check_click()
+    # Update progress bar based on slider
+    val = gui_get_slider_value(slider)
+    gui_set_progressbar_value(progress, val)
     
-    if clicked >= 0 and clicked <= 8 and game_over == False:
-        # Grid button clicked
-        if board[clicked] == "-":
-            if is_x_turn == True:
-                board[clicked] = "X"
-                gui_set_button_text(btn_ids[clicked], "X")
-                gui_set_label(status_label, "Player O's turn")
-                is_x_turn = False
-            else:
-                board[clicked] = "O"
-                gui_set_button_text(btn_ids[clicked], "O")
-                gui_set_label(status_label, "Player X's turn")
-                is_x_turn = True
-
-            # Check for a winner
-            if board[0] == board[1] and board[1] == board[2] and board[0] != "-":
-                gui_set_label(status_label, f"Player {board[0]} wins!")
-                game_over = True
-            elif board[3] == board[4] and board[4] == board[5] and board[3] != "-":
-                gui_set_label(status_label, f"Player {board[3]} wins!")
-                game_over = True
-            elif board[6] == board[7] and board[7] == board[8] and board[6] != "-":
-                gui_set_label(status_label, f"Player {board[6]} wins!")
-                game_over = True
-            elif board[0] == board[3] and board[3] == board[6] and board[0] != "-":
-                gui_set_label(status_label, f"Player {board[0]} wins!")
-                game_over = True
-            elif board[1] == board[4] and board[4] == board[7] and board[1] != "-":
-                gui_set_label(status_label, f"Player {board[1]} wins!")
-                game_over = True
-            elif board[2] == board[5] and board[5] == board[8] and board[2] != "-":
-                gui_set_label(status_label, f"Player {board[2]} wins!")
-                game_over = True
-            elif board[0] == board[4] and board[4] == board[8] and board[0] != "-":
-                gui_set_label(status_label, f"Player {board[0]} wins!")
-                game_over = True
-            elif board[2] == board[4] and board[4] == board[6] and board[2] != "-":
-                gui_set_label(status_label, f"Player {board[2]} wins!")
-                game_over = True
-
-    if clicked == restart_btn_id:
-        # Reset the game
-        board = ["-", "-", "-", "-", "-", "-", "-", "-", "-"]
-        is_x_turn = True
-        game_over = False
-        gui_set_label(status_label, "Player X's turn")
-        i = 0
-        while i < 9:
-            gui_set_button_text(btn_ids[i], "-")
-            i = i + 1
-
+    clicked = gui_check_click()
+    if clicked == btn:
+        name = gui_get_textbox_text(name_box)
+        gui_set_label(status_label, f"Hello {name}! Value: {val}")
+        
     gui_update()
 
 gui_close()
