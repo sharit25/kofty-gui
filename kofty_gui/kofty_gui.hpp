@@ -3,197 +3,51 @@
 
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/raylib.hpp>
-#include <TGUI/Widgets/EditBox.hpp> 
+#include <TGUI/Widgets/EditBox.hpp>
 #include <string>
 #include <vector>
+#include <map>
 
 namespace kofty_gui_detail {
     inline tgui::Gui* g_gui = nullptr;
-    
-    inline std::vector<tgui::Button::Ptr> g_buttons;
-    inline std::vector<tgui::Label::Ptr> g_labels;
-    inline std::vector<tgui::EditBox::Ptr> g_textboxes;
-    inline std::vector<tgui::Slider::Ptr> g_sliders;
-    inline std::vector<tgui::ProgressBar::Ptr> g_progressbars;
-    inline std::vector<tgui::ComboBox::Ptr> g_dropdowns;
-    inline std::vector<tgui::Group::Ptr> g_layouts;
-    
-    inline int g_last_clicked_index = -1; 
+
+    inline std::map<int, tgui::Widget::Ptr> g_widgets;
+    inline std::map<int, tgui::Container::Ptr> g_layouts;
+    inline std::map<int, tgui::Grid::Ptr> g_grids;
+
+    inline int g_next_id = 0;
+    inline int g_last_clicked_id = -1;
 }
 
-inline tgui::Container::Ptr get_container(int parent_id) {
-    if (parent_id >= 0 && parent_id < (int)kofty_gui_detail::g_layouts.size()) {
-        return kofty_gui_detail::g_layouts[parent_id];
-    }
-    return kofty_gui_detail::g_gui->getContainer();
-}
-
+// --- WINDOW & LIFECYCLE ---------------------------------------------
 inline void gui_window(int w, int h, const std::string& title) {
     SetTraceLogLevel(LOG_ERROR);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(w, h, title.c_str());
     SetTargetFPS(60);
+
     kofty_gui_detail::g_gui = new tgui::Gui();
-    
-    kofty_gui_detail::g_buttons.clear();
-    kofty_gui_detail::g_labels.clear();
-    kofty_gui_detail::g_textboxes.clear();
-    kofty_gui_detail::g_sliders.clear();
-    kofty_gui_detail::g_progressbars.clear();
-    kofty_gui_detail::g_dropdowns.clear();
+    kofty_gui_detail::g_widgets.clear();
     kofty_gui_detail::g_layouts.clear();
-    kofty_gui_detail::g_last_clicked_index = -1;
+    kofty_gui_detail::g_grids.clear();
+    kofty_gui_detail::g_next_id = 0;
+    kofty_gui_detail::g_last_clicked_id = -1;
 }
 
-// --- LAYOUTS ---
-// orientation: 0 = Vertical, 1 = Horizontal
-inline int gui_add_boxlayout(int orientation, int spacing, int x, int y, int w, int h, int parent_id) {
-    tgui::Group::Ptr layout;
-    if (orientation == 0) {
-        auto v = tgui::VerticalLayout::create();
-        v->getRenderer()->setSpaceBetweenWidgets(spacing);
-        layout = v;
-    } else {
-        auto h = tgui::HorizontalLayout::create();
-        h->getRenderer()->setSpaceBetweenWidgets(spacing);
-        layout = h;
-    }
-    layout->setPosition(x, y);
-    layout->setSize(w, h);
-    
-    int index = kofty_gui_detail::g_layouts.size();
-    kofty_gui_detail::g_layouts.push_back(layout);
-    get_container(parent_id)->add(layout);
-    return index;
+inline void gui_close() {
+    //delete kofty_gui_detail::g_gui;
+    kofty_gui_detail::g_gui = nullptr;
+    CloseWindow();
 }
 
-inline int gui_add_gridlayout(int cols, int x, int y, int w, int h, int parent_id) {
-    // GridLayout still uses Group for now (TGUI has a Grid but it's different)
-    auto group = tgui::Group::create();
-    group->setPosition(x, y);
-    group->setSize(w, h);
-    int index = kofty_gui_detail::g_layouts.size();
-    kofty_gui_detail::g_layouts.push_back(group);
-    get_container(parent_id)->add(group);
-    return index;
-}
-
-// --- WIDGETS ---
-// Note: x and y are IGNORED if parent_id is a layout, because the layout handles positioning.
-inline int gui_add_label(const std::string& text, int x, int y, int parent_id) {
-    auto label = tgui::Label::create(text);
-    label->setTextSize(20);
-    int index = kofty_gui_detail::g_labels.size();
-    kofty_gui_detail::g_labels.push_back(label);
-    get_container(parent_id)->add(label);
-    return index;
-}
-
-inline void gui_set_label(int index, const std::string& text) {
-    if (index >= 0 && index < (int)kofty_gui_detail::g_labels.size()) {
-        kofty_gui_detail::g_labels[index]->setText(text);
-    }
-}
-
-inline int gui_add_button(const std::string& label, int x, int y, int bw, int bh, int parent_id) {
-    auto button = tgui::Button::create(label);
-    button->setSize(bw, bh);
-    int index = kofty_gui_detail::g_buttons.size();
-    kofty_gui_detail::g_buttons.push_back(button);
-    get_container(parent_id)->add(button);
-    button->onPress([index]() {
-        kofty_gui_detail::g_last_clicked_index = index;
-    });
-    return index;
-}
-
-inline void gui_set_button_text(int index, const std::string& text) {
-    if (index >= 0 && index < (int)kofty_gui_detail::g_buttons.size()) {
-        kofty_gui_detail::g_buttons[index]->setText(text);
-    }
-}
-
-inline int gui_add_textbox(const std::string& placeholder, int x, int y, int w, int h, int parent_id) {
-    auto box = tgui::EditBox::create();
-    box->setSize(w, h);
-    box->setDefaultText(placeholder);
-    int index = kofty_gui_detail::g_textboxes.size();
-    kofty_gui_detail::g_textboxes.push_back(box);
-    get_container(parent_id)->add(box);
-    return index;
-}
-
-inline const char* gui_get_textbox_text(int index) {
-    if (index >= 0 && index < (int)kofty_gui_detail::g_textboxes.size()) {
-        static std::string temp;
-        temp = kofty_gui_detail::g_textboxes[index]->getText().toStdString();
-        return temp.c_str();
-    }
-    return "";
-}
-
-inline int gui_add_slider(int x, int y, int w, int h, int min_val, int max_val, int parent_id) {
-    auto slider = tgui::Slider::create();
-    slider->setSize(w, h);
-    slider->setMinimum(min_val);
-    slider->setMaximum(max_val);
-    int index = kofty_gui_detail::g_sliders.size();
-    kofty_gui_detail::g_sliders.push_back(slider);
-    get_container(parent_id)->add(slider);
-    return index;
-}
-
-inline int gui_get_slider_value(int index) {
-    if (index >= 0 && index < (int)kofty_gui_detail::g_sliders.size()) {
-        return (int)kofty_gui_detail::g_sliders[index]->getValue();
-    }
-    return 0;
-}
-
-inline int gui_add_progressbar(int x, int y, int w, int h, int max_val, int parent_id) {
-    auto bar = tgui::ProgressBar::create();
-    bar->setSize(w, h);
-    bar->setMaximum(max_val);
-    int index = kofty_gui_detail::g_progressbars.size();
-    kofty_gui_detail::g_progressbars.push_back(bar);
-    get_container(parent_id)->add(bar);
-    return index;
-}
-
-inline void gui_set_progressbar_value(int index, int value) {
-    if (index >= 0 && index < (int)kofty_gui_detail::g_progressbars.size()) {
-        kofty_gui_detail::g_progressbars[index]->setValue(value);
-    }
-}
-
-inline int gui_add_dropdown(int x, int y, int w, int parent_id) {
-    auto box = tgui::ComboBox::create();
-    box->setSize(w, 30);
-    int index = kofty_gui_detail::g_dropdowns.size();
-    kofty_gui_detail::g_dropdowns.push_back(box);
-    get_container(parent_id)->add(box);
-    return index;
-}
-
-inline void gui_add_dropdown_item(int index, const std::string& item) {
-    if (index >= 0 && index < (int)kofty_gui_detail::g_dropdowns.size()) {
-        kofty_gui_detail::g_dropdowns[index]->addItem(item);
-    }
-}
-
-inline int gui_get_dropdown_index(int index) {
-    if (index >= 0 && index < (int)kofty_gui_detail::g_dropdowns.size()) {
-        return kofty_gui_detail::g_dropdowns[index]->getSelectedItemIndex();
-    }
-    return -1;
-}
-
-// --- MAIN LOOP ---
 inline bool gui_running() {
     return !WindowShouldClose();
 }
 
 inline void gui_update() {
     auto* gui = kofty_gui_detail::g_gui;
+    gui->setAbsoluteViewport(tgui::FloatRect(
+        {0.f, 0.f}, {(float)GetScreenWidth(), (float)GetScreenHeight()}));
     gui->handleEvents();
     while (int ch = GetCharPressed()) gui->handleCharPressed(ch);
     while (int key = GetKeyPressed())  gui->handleKeyPressed(key);
@@ -204,16 +58,145 @@ inline void gui_update() {
     EndDrawing();
 }
 
-inline int gui_check_click() {
-    int clicked = kofty_gui_detail::g_last_clicked_index;
-    kofty_gui_detail::g_last_clicked_index = -1;
-    return clicked;
+// --- INTERNAL HELPERS -----------------------------------------------
+inline tgui::Container::Ptr _kofty_parent(int parent_id) {
+    if (parent_id >= 0 && kofty_gui_detail::g_layouts.count(parent_id)) {
+        return kofty_gui_detail::g_layouts[parent_id];
+    }
+    // Root window
+    return nullptr;
 }
 
-inline void gui_close() {
-    delete kofty_gui_detail::g_gui;
-    kofty_gui_detail::g_gui = nullptr;
-    CloseWindow();
+inline void _kofty_attach_container(int layout_id, int parent_id) {
+    auto layout = kofty_gui_detail::g_layouts[layout_id];
+
+    if (parent_id >= 0 && kofty_gui_detail::g_grids.count(parent_id)) {
+        kofty_gui_detail::g_grids[parent_id]->addWidget(layout, 0, 0);
+        return;
+    }
+    if (parent_id >= 0 && kofty_gui_detail::g_layouts.count(parent_id)) {
+        kofty_gui_detail::g_layouts[parent_id]->add(layout);
+        return;
+    }
+    kofty_gui_detail::g_gui->add(layout);
+}
+
+inline void _kofty_attach_widget(int widget_id, int parent_id, int row, int col) {
+    auto w = kofty_gui_detail::g_widgets[widget_id];
+
+    if (parent_id >= 0 && kofty_gui_detail::g_grids.count(parent_id)) {
+        kofty_gui_detail::g_grids[parent_id]->addWidget(w, row, col);
+        return;
+    }
+    if (parent_id >= 0 && kofty_gui_detail::g_layouts.count(parent_id)) {
+        kofty_gui_detail::g_layouts[parent_id]->add(w);
+        return;
+    }
+    kofty_gui_detail::g_gui->add(w);
+}
+
+// --- LAYOUTS --------------------------------------------------------
+// orientation: 0 = Vertical, 1 = Horizontal
+inline int gui_add_boxlayout(int orientation, int spacing, int parent_id) {
+    tgui::Container::Ptr layout;
+    if (orientation == 0) {
+        auto v = tgui::VerticalLayout::create();
+        v->getRenderer()->setSpaceBetweenWidgets(spacing);
+        layout = v;
+    } else {
+        auto h = tgui::HorizontalLayout::create();
+        h->getRenderer()->setSpaceBetweenWidgets(spacing);
+        layout = h;
+    }
+    int id = kofty_gui_detail::g_next_id++;
+    kofty_gui_detail::g_layouts[id] = layout;
+    layout->setSize("100%", "100%");
+    _kofty_attach_container(id, parent_id);
+    return id;
+}
+
+inline int gui_add_gridlayout(int cols, int spacing, int parent_id) {
+    auto grid = tgui::Grid::create();
+    int id = kofty_gui_detail::g_next_id++;
+    kofty_gui_detail::g_layouts[id] = grid;
+    kofty_gui_detail::g_grids[id] = grid;
+    grid->setSize("100%", "100%");
+    _kofty_attach_container(id, parent_id);
+    return id;
+}
+
+// --- WIDGETS --------------------------------------------------------
+// row/col only used when parent is a grid
+inline int gui_add_button(const std::string& text,
+                          int parent_id,
+                          int row = 0, int col = 0) {
+    auto btn = tgui::Button::create(text);
+    int id = kofty_gui_detail::g_next_id++;
+    kofty_gui_detail::g_widgets[id] = btn;
+    _kofty_attach_widget(id, parent_id, row, col);
+    btn->onPress([id]() {
+        kofty_gui_detail::g_last_clicked_id = id;
+    });
+    return id;
+}
+
+inline int gui_add_label(const std::string& text,
+                         int parent_id,
+                         int row = 0, int col = 0) {
+    auto lbl = tgui::Label::create(text);
+    lbl->setTextSize(20);
+    int id = kofty_gui_detail::g_next_id++;
+    kofty_gui_detail::g_widgets[id] = lbl;
+    _kofty_attach_widget(id, parent_id, row, col);
+    return id;
+}
+
+// --- PROPERTY SETTERS -----------------------------------------------
+// text
+inline void gui_set_text(int widget_id, const std::string& text) {
+    if (!kofty_gui_detail::g_widgets.count(widget_id)) return;
+    auto w = kofty_gui_detail::g_widgets[widget_id];
+    if (auto b = std::dynamic_pointer_cast<tgui::Button>(w)) b->setText(text);
+    else if (auto l = std::dynamic_pointer_cast<tgui::Label>(w)) l->setText(text);
+}
+
+// size (optional — Kivy-style: layouts decide if omitted)
+inline void gui_set_size(int widget_id, int w, int h) {
+    if (!kofty_gui_detail::g_widgets.count(widget_id)) return;
+    kofty_gui_detail::g_widgets[widget_id]->setSize((float)w, (float)h);
+}
+
+// position (absolute — only meaningful when widget is directly on root)
+inline void gui_set_pos(int widget_id, int x, int y) {
+    if (!kofty_gui_detail::g_widgets.count(widget_id)) return;
+    kofty_gui_detail::g_widgets[widget_id]->setPosition((float)x, (float)y);
+}
+
+// button color
+inline void gui_set_button_color(int widget_id, int r, int g, int b) {
+    if (!kofty_gui_detail::g_widgets.count(widget_id)) return;
+    auto w = kofty_gui_detail::g_widgets[widget_id];
+    if (auto btn = std::dynamic_pointer_cast<tgui::Button>(w)) {
+        btn->getRenderer()->setBackgroundColor(tgui::Color(r, g, b));
+        btn->getRenderer()->setBackgroundColorHover(
+            tgui::Color(r > 20 ? r - 20 : 0, g > 20 ? g - 20 : 0, b > 20 ? b - 20 : 0));
+    }
+}
+
+// label color
+inline void gui_set_label_color(int widget_id, int r, int g, int b) {
+    if (!kofty_gui_detail::g_widgets.count(widget_id)) return;
+    auto w = kofty_gui_detail::g_widgets[widget_id];
+    if (auto lbl = std::dynamic_pointer_cast<tgui::Label>(w)) {
+        lbl->getRenderer()->setTextColor(tgui::Color(r, g, b));
+    }
+}
+
+// --- EVENT POLLING --------------------------------------------------
+inline int gui_check_click() {
+    int clicked = kofty_gui_detail::g_last_clicked_id;
+    kofty_gui_detail::g_last_clicked_id = -1;
+    return clicked;
 }
 
 #endif

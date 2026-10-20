@@ -1,5 +1,27 @@
-from hello_ui import build_ui
+# hello_main.kfy
+from kofty_gui import gui_window, gui_running, gui_update, gui_close
+from kofty_gui import gui_add_boxlayout, gui_add_gridlayout
+from kofty_gui import gui_add_button, gui_add_label
+from kofty_gui import gui_set_text, gui_set_size, gui_set_pos
+from kofty_gui import gui_set_button_color, gui_set_label_color
+from kofty_gui import gui_check_click
 
-print("starting app")
-build_ui()
-print("done")
+
+class MainApp:
+    def __init__(self):
+        print("MainApp initialized")
+        self.app_title = "Kofty GUI Demo"
+        self.click_count = 0
+
+
+app = MainApp()
+gui_window(800, 600, app.app_title)
+gui_load_ui("hello_ui.kfy")
+
+while gui_running():
+    clicked = gui_check_click()
+    if clicked >= 0:
+        app.click_count = app.click_count + 1
+        gui_set_text(clicked, f"Clicked {app.click_count}x")
+    gui_update()
+gui_close()
