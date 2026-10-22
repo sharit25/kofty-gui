@@ -25,6 +25,9 @@ Repository = "https://github.com/sharit25/kofty-gui"
 [project.entry-points."kofty.modules"]
 kofty_gui = "kofty_gui:register"
 
+[project.entry-points."kofty.transpilers"]
+kofty_gui = "kofty_gui.gui_transpiler:parse_gui_source"
+
 [tool.setuptools]
 packages = ["kofty_gui"]
 

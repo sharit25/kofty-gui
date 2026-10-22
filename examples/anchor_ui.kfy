@@ -1,0 +1,37 @@
+<MainApp>:
+    <AnchorLayout>:
+        Label:
+            text: "Title (top-left)"
+            anchor: "top-left"
+            pos: 10, 10
+            size: 200, 30
+
+        Label:
+            text: "Status (top-center)"
+            anchor: "top-center"
+            pos: 0, 10
+            size: 200, 30
+
+        Button:
+            text: "Close (top-right)"
+            anchor: "top-right"
+            pos: -10, 10
+            size: 160, 40
+
+        Button:
+            text: "Center"
+            anchor: "center"
+            pos: 0, 0
+            size: 200, 60
+
+        Button:
+            text: "Quit (bottom-left)"
+            anchor: "bottom-left"
+            pos: 10, -10
+            size: 180, 40
+
+        Button:
+            text: "OK (bottom-right)"
+            anchor: "bottom-right"
+            pos: -10, -10
+            size: 180, 40

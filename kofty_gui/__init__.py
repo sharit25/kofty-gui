@@ -38,3 +38,11 @@ def register():
         "lib_dirs": lib_dirs(),
         "libs": libs(),
     }
+
+def include_dirs():
+    return [
+        str(package_dir()),                        # kofty_gui/
+        str(package_dir().parent / "examples"),    # kofty-gui/examples/
+        str(_TGUI_INCLUDE),
+        str(_UCRT64_INCLUDE),
+    ]

@@ -1,0 +1,15 @@
+<MainApp>:
+    background_color: 0, 0, 0
+
+    <BoxLayout>:
+        orientation: "vertical"
+
+        Label:
+            text: "Hello Kofty!"
+            color: 255, 255, 255
+            size: 200, 40
+
+        Button:
+            text: "Click Me"
+            color: 0, 255, 0
+            size: 200, 50

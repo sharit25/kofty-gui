@@ -1,28 +1,23 @@
-from kofty_gui import gui_window, gui_running, gui_update, gui_close
-from kofty_gui import gui_add_boxlayout, gui_add_label, gui_add_button
+# hello_ui.kfy
+<MainApp>:
+    <BoxLayout>:
+        orientation: "vertical"
 
-gui_window(600, 500, "Kofty BoxLayout Test")
+        Label:
+            text: "Welcome to Kivy Style"
+            color: 0, 0, 0
 
-# 1. Create a VERTICAL BoxLayout (orientation=0), with 20px padding.
-# x=50, y=50, w=400, h=400
-main_box = gui_add_boxlayout(0, 20, 50, 50, 400, 400, -1)
+        Button:
+            text: "Red Button"
+            size: 200, 50
+            color: 255, 0, 0
 
-# 2. Add widgets to the layout.
-# Notice the x and y coordinates are set to 0, because the layout handles them!
-gui_add_label("Choose an option:", 0, 0, main_box)
-gui_add_button("Start Game", 0, 0, 300, 50, main_box)
-gui_add_button("Settings", 0, 0, 300, 50, main_box)
-gui_add_button("Exit", 0, 0, 300, 50, main_box)
+        Button:
+            text: "Blue Button"
+            size: 200, 50
+            color: 0, 0, 255
 
-# 3. Create a HORIZONTAL BoxLayout (orientation=1) inside a different area
-h_box = gui_add_boxlayout(1, 10, 50, 300, 400, 100, -1)
-
-# Add buttons with specific widths to demonstrate horizontal stacking
-gui_add_button("Left", 0, 0, 100, 40, h_box)
-gui_add_button("Middle", 0, 0, 100, 40, h_box)
-gui_add_button("Right", 0, 0, 100, 40, h_box)
-
-while gui_running():
-    gui_update()
-
-gui_close()
+        Button:
+            text: "Green Button"
+            size: 200, 50
+            color: 0, 255, 0

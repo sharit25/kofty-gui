@@ -1,0 +1,28 @@
+from kofty_gui import gui_window, gui_running, gui_update, gui_close, gui_load_ui
+from kofty_gui import gui_set_window_color, gui_check_click
+from kofty_gui import gui_add_boxlayout, gui_add_gridlayout, gui_add_anchorlayout
+from kofty_gui import gui_anchor_add
+from kofty_gui import gui_add_button, gui_add_label, gui_add_textinput
+from kofty_gui import gui_set_size, gui_set_pos, gui_get_text
+from kofty_gui import gui_set_button_bg_color, gui_set_button_text_color
+from kofty_gui import gui_set_label_color, gui_set_label_bg_color
+from kofty_gui import gui_set_textinput_text_color, gui_set_textinput_bg_color
+from kofty_gui import gui_set_size_hint, gui_set_pos_hint
+
+from widgets import Widget, Button, Label, TextInput
+
+
+class MainWidget(Widget):
+    def __init__(self):
+        pass
+
+app = MainWidget()
+gui_window(800, 600, "My App")
+gui_load_ui("textinput_ui.kfy")
+
+while gui_running():
+    
+    gui_update()
+    
+gui_close()
+

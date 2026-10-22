@@ -1,0 +1,22 @@
+from kofty_gui import gui_window, gui_running, gui_update, gui_close
+from kofty_gui import gui_load_ui, gui_set_window_color
+from kofty_gui import gui_add_button, gui_add_label
+from kofty_gui import gui_set_size, gui_set_pos
+from kofty_gui import gui_set_button_text_color, gui_set_label_color
+from kofty_gui import gui_set_button_bg_color, gui_set_label_bg_color
+
+class MainWidget:
+    def __init__(self):
+        pass
+
+app = MainWidget()
+
+# Kivy defaults to 800x600
+gui_window(800, 600, "Kofty Kivy-style")
+
+gui_load_ui("mainwidget_ui.kfy")
+
+while gui_running():
+    gui_update()
+
+gui_close()
