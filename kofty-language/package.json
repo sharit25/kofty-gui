@@ -1,0 +1,52 @@
+
+{
+    "name": "kofty-language",
+    "displayName": "Kofty Language Support",
+    "description": "Syntax highlighting and comment support for Kofty and Kofty UI.",
+    "version": "0.1.0",
+    "publisher": "kofty",
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "kofty",
+                "aliases": [
+                    "Kofty",
+                    "kofty"
+                ],
+                "extensions": [
+                    ".kfy"
+                ],
+                "configuration": "./language-configuration.json"
+            },
+            {
+                "id": "kofty-ui",
+                "aliases": [
+                    "Kofty UI",
+                    "kofty-ui"
+                ],
+                "extensions": [
+                    ".kui"
+                ],
+                "configuration": "./language-configuration-ui.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "kofty",
+                "scopeName": "source.kofty",
+                "path": "./syntaxes/kofty.tmLanguage.json"
+            },
+            {
+                "language": "kofty-ui",
+                "scopeName": "source.kofty-ui",
+                "path": "./syntaxes/kofty-ui.tmLanguage.json"
+            }
+        ]
+    }
+}

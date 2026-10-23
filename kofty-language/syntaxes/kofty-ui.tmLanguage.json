@@ -1,0 +1,60 @@
+
+{
+  "scopeName": "source.kofty-ui",
+  "patterns": [
+    {
+      "name": "comment.line.number-sign.kofty-ui",
+      "match": "#.*$"
+    },
+    {
+      "name": "entity.name.type.widget.kofty-ui",
+      "match": "\\b(Button|Label|TextInput|BoxLayout|GridLayout|AnchorLayout|Widget|MainWidget|FloatLayout|RelativeLayout|StackLayout|Image|TextLabel)\\b"
+    },
+    {
+      "name": "keyword.control.kofty-ui",
+      "match": "\\b(orientation|size_hint|pos_hint|size|width|height|pos|x|y|spacing|padding|cols|rows|text|color|background_color|anchor|disabled|opacity|font_size|font_name|bold|italic|multiline|hint_text|readonly|minimum_width|minimum_height)\\b(?=\\s*:)"
+    },
+    {
+      "name": "string.quoted.double.kofty-ui",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.kofty-ui",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "string.quoted.single.kofty-ui",
+      "begin": "'",
+      "end": "'",
+      "patterns": [
+        {
+          "name": "constant.character.escape.kofty-ui",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "constant.language.boolean.kofty-ui",
+      "match": "\\b(True|False|None)\\b"
+    },
+    {
+      "name": "constant.numeric.kofty-ui",
+      "match": "(?<![A-Za-z0-9_])\\d+(?:\\.\\d+)?(?![A-Za-z0-9_])"
+    },
+    {
+      "name": "keyword.operator.kofty-ui",
+      "match": "\\+|-|\\*|/|==|!=|<=|>=|="
+    },
+    {
+      "name": "punctuation.separator.key-value.kofty-ui",
+      "match": ":"
+    },
+    {
+      "name": "punctuation.separator.sequence.kofty-ui",
+      "match": ","
+    }
+  ]
+}

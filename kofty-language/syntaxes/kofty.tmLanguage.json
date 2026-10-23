@@ -1,0 +1,91 @@
+
+{
+  "scopeName": "source.kofty",
+  "patterns": [
+    {
+      "name": "comment.line.number-sign.kofty",
+      "match": "#.*$"
+    },
+    {
+      "name": "meta.function.definition.kofty",
+      "begin": "\\b(def)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(\\()",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.kofty" },
+        "2": { "name": "entity.name.function.kofty" },
+        "3": { "name": "punctuation.section.parameters.begin.kofty" }
+      },
+      "end": "(?=\\))",
+      "patterns": [
+        {
+          "name": "variable.parameter.kofty",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+        },
+        {
+          "name": "keyword.operator.kofty",
+          "match": "="
+        }
+      ]
+    },
+    {
+      "name": "keyword.control.kofty",
+      "match": "\\b(if|else|elif|for|while|return|break|continue|pass|import|from|as|class|def|try|except|finally|with|lambda|and|or|not|in|is|raise|yield|assert|del|global|nonlocal|async|await)\\b"
+    },
+    {
+      "name": "constant.language.kofty",
+      "match": "\\b(True|False|None)\\b"
+    },
+    {
+      "name": "support.function.builtin.kofty",
+      "match": "\\b(print|len|range|str|int|float|bool|list|dict|tuple|set|type|super|self|open|enumerate|zip|map|filter|sum|min|max|abs|round|input|isinstance|hasattr|getattr|setattr|sorted|reversed|any|all)\\b(?=\\s*\\()"
+    },
+    {
+      "name": "entity.name.type.class.kofty",
+      "match": "\\bclass\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "entity.name.type.class.kofty" }
+      }
+    },
+    {
+      "name": "constant.numeric.kofty",
+      "match": "(?<![A-Za-z0-9_])(?:0[xX][0-9A-Fa-f]+|0[bB][01]+|0[oO][0-7]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)(?![A-Za-z0-9_])"
+    },
+    {
+      "name": "string.quoted.double.kofty",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.kofty",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "string.quoted.single.kofty",
+      "begin": "'",
+      "end": "'",
+      "patterns": [
+        {
+          "name": "constant.character.escape.kofty",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "entity.name.function.kofty",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()"
+    },
+    {
+      "name": "keyword.operator.kofty",
+      "match": "\\*\\*|//|==|!=|<=|>=|\\+=|-=|\\*=|/=|%=|=|\\+|-|\\*|/|%|<|>|&|\\||\\^|~"
+    },
+    {
+      "name": "punctuation.separator.kofty",
+      "match": "[,.:;]"
+    },
+    {
+      "name": "variable.other.kofty",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+    }
+  ]
+}

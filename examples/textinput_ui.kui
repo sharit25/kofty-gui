@@ -1,0 +1,24 @@
+<BoxLayout>:
+    orientation: "vertical"
+    spacing: 0
+
+    Button:
+        text: "Test button"
+        size: "100dp", "60dp"
+        wodth: "100dp"
+        height: "60dp"
+        pos_hint: {"x": 0}
+        pos_hint: {"x": .1}
+        pos_hint: {"right": 1}
+        pos_hint: {"center_x": .5}
+        size_hint: None, None
+        background_color: 255, 0, 0
+
+    Button:
+        text: "Second button"
+        size_hint: 1, 2
+        background_color: 0, 0, 255
+
+    Button:
+        text: "third button"
+        background_color: 0, 255, 0
